@@ -1,5 +1,3 @@
-login screen
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -145,24 +143,30 @@ login screen
       const password = document.getElementById('registerPassword').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
 
+      // Basic validation
       if (password !== confirmPassword) {
         document.getElementById('registerErrorMessage').textContent = 'Passwords do not match!';
         return;
       }
 
-      const response = await fetch("http://127.0.0.1:5000/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, username, password })
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        alert(data.message);
-        toggleForms();  // Switch to login form after successful registration
-      } else {
-        document.getElementById('registerErrorMessage').textContent = data.message;
+      if (username === '' || password === '') {
+        document.getElementById('registerErrorMessage').textContent = 'Username and Password cannot be empty!';
+        return;
       }
+
+      const users = JSON.parse(localStorage.getItem('users')) || [];
+      // Check if the username already exists
+      if (users.some(user => user.username === username)) {
+        document.getElementById('registerErrorMessage').textContent = 'Username already exists!';
+        return;
+      }
+
+      // Store the new user
+      users.push({ name, email, username, password });
+      localStorage.setItem('users', JSON.stringify(users));
+
+      alert('Registration successful!');
+      toggleForms();  // Switch to login form after successful registration
     });
 
     // Login Form Submission
@@ -172,28 +176,19 @@ login screen
       const username = document.getElementById('loginUsername').value;
       const password = document.getElementById('loginPassword').value;
 
-      const response = await fetch("http://127.0.0.1:5000/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-      });
+      const users = JSON.parse(localStorage.getItem('users')) || [];
 
-      const data = await response.json();
-      if (response.ok) {
-        alert(data.message);
-        localStorage.setItem("token", data.token);  // Store token in localStorage
+      // Check if the username exists and password matches
+      const user = users.find(user => user.username === username && user.password === password);
+
+      if (user) {
+        alert('Login successful!');
+        // Redirect or perform further actions here
         window.location.href = "dashboard.html";  // Redirect to dashboard after login
       } else {
-        document.getElementById('loginErrorMessage').textContent = data.message;
+        document.getElementById('loginErrorMessage').textContent = 'Invalid username or password.';
       }
     });
   </script>
 </body>
 </html>
-     
-     
-
-    
-     
-    
-     
