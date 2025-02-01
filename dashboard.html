@@ -177,11 +177,12 @@
             }
 
             let pointsBox = document.getElementById("points-box");
-            pointsBox.textContent = You have earned ${totalPoints} points!; // Fixed string interpolation
+            pointsBox.textContent = `You have earned ${totalPoints} points!`; 
             pointsBox.style.display = totalPoints > 0 ? "block" : "none";
         }
 
         function showInfo(category) {
+            console.log("Showing info for:", category); // Debugging line
             const infoBox = document.getElementById('info');
             const selections = loadSelections();
 
